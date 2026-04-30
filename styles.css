@@ -2710,6 +2710,7 @@ img {
 }
 
 .compare-card {
+  --split: 50%;
   position: relative;
   min-height: 0;
   aspect-ratio: 1 / 1;
@@ -2717,6 +2718,9 @@ img {
   border: 1px solid var(--purple);
   border-radius: 14px;
   background: #030303;
+  cursor: ew-resize;
+  touch-action: none;
+  user-select: none;
 }
 
 .compare-card img {
@@ -2729,12 +2733,12 @@ img {
 }
 
 .compare-before {
-  clip-path: inset(0 64% 0 0);
+  clip-path: inset(0 calc(100% - var(--split)) 0 0);
   object-position: left center;
 }
 
 .compare-after {
-  clip-path: inset(0 0 0 36%);
+  clip-path: inset(0 0 0 var(--split));
   object-position: center center;
 }
 
@@ -2742,16 +2746,17 @@ img {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 36%;
+  left: var(--split);
   width: 2px;
   background: var(--purple);
   z-index: 3;
+  transform: translateX(-50%);
 }
 
 .compare-handle {
   position: absolute;
   top: 50%;
-  left: 36%;
+  left: var(--split);
   z-index: 4;
   width: 54px;
   height: 54px;
@@ -2796,6 +2801,10 @@ img {
   font-size: 17px;
   line-height: 1;
   text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity .16s ease, transform .16s ease;
 }
 
 .before-label {
@@ -2804,6 +2813,13 @@ img {
 
 .after-label {
   left: 53%;
+}
+
+.compare-card:hover .compare-label,
+.compare-card:focus-within .compare-label,
+.compare-card.is-dragging .compare-label {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 @media (max-width: 900px) {

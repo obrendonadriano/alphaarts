@@ -110,3 +110,38 @@ document.querySelectorAll(".thumb-row").forEach((row, rowIndex) => {
 
   row.replaceChildren(track);
 });
+
+document.querySelectorAll(".compare-card").forEach((card) => {
+  const setSplit = (clientX) => {
+    const rect = card.getBoundingClientRect();
+    const rawPercent = ((clientX - rect.left) / rect.width) * 100;
+    const percent = Math.min(92, Math.max(8, rawPercent));
+    card.style.setProperty("--split", `${percent}%`);
+  };
+
+  const stopDrag = () => {
+    card.classList.remove("is-dragging");
+    if (activePointerId !== null && card.hasPointerCapture?.(activePointerId)) {
+      card.releasePointerCapture(activePointerId);
+    }
+    activePointerId = null;
+  };
+
+  let activePointerId = null;
+
+  card.addEventListener("pointerdown", (event) => {
+    activePointerId = event.pointerId;
+    card.classList.add("is-dragging");
+    card.setPointerCapture?.(event.pointerId);
+    setSplit(event.clientX);
+  });
+
+  card.addEventListener("pointermove", (event) => {
+    if (activePointerId !== event.pointerId) return;
+    setSplit(event.clientX);
+  });
+
+  card.addEventListener("pointerup", stopDrag);
+  card.addEventListener("pointercancel", stopDrag);
+  card.addEventListener("lostpointercapture", stopDrag);
+});
