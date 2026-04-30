@@ -2723,11 +2723,19 @@ img {
   user-select: none;
 }
 
-.compare-card img {
+.compare-layer,
+.compare-layer img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+.compare-layer {
+  overflow: hidden;
+}
+
+.compare-layer img {
   max-width: none;
   object-fit: cover;
 }
@@ -2794,13 +2802,14 @@ img {
   position: absolute;
   top: 50%;
   z-index: 5;
-  width: 35%;
+  width: min(46%, 210px);
   padding: 12px 12px;
   background: rgba(70, 70, 70, .78);
   color: #fff;
   font-size: 17px;
   line-height: 1;
   text-align: center;
+  white-space: nowrap;
   opacity: 0;
   pointer-events: none;
   transform: translateY(4px);
@@ -2808,11 +2817,11 @@ img {
 }
 
 .before-label {
-  left: 6%;
+  left: 12%;
 }
 
 .after-label {
-  left: 53%;
+  right: 12%;
 }
 
 .compare-card:hover .compare-label,
@@ -2874,6 +2883,7 @@ img {
 
   .compare-label {
     padding: 9px 7px;
+    width: min(48%, 150px);
     font-size: 12px;
   }
 }
