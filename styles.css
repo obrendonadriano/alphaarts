@@ -2448,6 +2448,66 @@ img {
   }
 }
 
+.designer-side p span {
+  color: #ff1717 !important;
+  -webkit-text-fill-color: #ff1717;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.alphaarts-side p span {
+  color: #00ff3b !important;
+  -webkit-text-fill-color: #00ff3b;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@media (max-width: 767px) {
+  .faq details {
+    padding: 16px 18px;
+    border-radius: 8px;
+  }
+
+  .faq summary {
+    gap: 9px;
+    font-size: 17px;
+    line-height: 1.18;
+    font-weight: 700;
+  }
+
+  .faq summary::before {
+    margin-top: .34em;
+    border-top-width: 5px;
+    border-bottom-width: 5px;
+    border-left-width: 8px;
+  }
+
+  .faq p {
+    padding-left: 17px;
+    font-size: 15px;
+    line-height: 1.28;
+  }
+
+  .offer {
+    grid-template-columns: 1fr 40px 40px 1fr;
+    gap: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .offer-label {
+    font-size: 14px;
+  }
+
+  .timer-box {
+    width: 40px;
+    height: 48px;
+    transform: translateX(6px);
+  }
+
+  .buy-fixed {
+    width: 122px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
