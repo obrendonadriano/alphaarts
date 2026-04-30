@@ -1,5 +1,6 @@
 const TIMER_COOKIE = "alphaArtsTimerEndsAt";
 const TIMER_DURATION_MS = 5 * 60 * 1000;
+const META_CAPI_ENDPOINT = "/api/meta-capi";
 
 document.addEventListener("contextmenu", (event) => {
   event.preventDefault();
@@ -93,6 +94,34 @@ function updateTimer() {
 
 updateTimer();
 setInterval(updateTimer, 1000);
+
+function sendMetaCapiPageView() {
+  if (!window.alphaMetaEventId) return;
+
+  const payload = {
+    eventId: window.alphaMetaEventId,
+    eventName: "PageView",
+    eventSourceUrl: window.location.href,
+    fbp: getCookie("_fbp"),
+    fbc: getCookie("_fbc")
+  };
+
+  const body = JSON.stringify(payload);
+
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(META_CAPI_ENDPOINT, new Blob([body], { type: "application/json" }));
+    return;
+  }
+
+  fetch(META_CAPI_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body,
+    keepalive: true
+  }).catch(() => {});
+}
+
+sendMetaCapiPageView();
 
 document.querySelectorAll(".thumb-row").forEach((row, rowIndex) => {
   const images = [...row.querySelectorAll("img")];
