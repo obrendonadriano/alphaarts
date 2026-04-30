@@ -1,0 +1,20 @@
+# Arquivos locais de verificacao e screenshots
+verify-*.png
+clone-*.png
+real-*.png
+preview*.png
+final-*.png
+fixed-*.png
+desktop-*.png
+mobile-*.png
+
+# Referencias usadas durante a clonagem, fora do deploy
+official-images.txt
+asset-contact-*.png
+logo-lateral-768x143.png
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/
+
