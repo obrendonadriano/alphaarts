@@ -1,6 +1,28 @@
 const TIMER_COOKIE = "alphaArtsTimerEndsAt";
 const TIMER_DURATION_MS = 5 * 60 * 1000;
 
+document.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
+});
+
+document.addEventListener("dragstart", (event) => {
+  if (event.target instanceof HTMLImageElement) {
+    event.preventDefault();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  const key = event.key.toLowerCase();
+  const blockedShortcut =
+    (event.ctrlKey && ["c", "s", "u", "p"].includes(key)) ||
+    (event.ctrlKey && event.shiftKey && ["i", "j", "c"].includes(key)) ||
+    event.key === "F12";
+
+  if (blockedShortcut) {
+    event.preventDefault();
+  }
+});
+
 function getCookie(name) {
   return document.cookie
     .split("; ")
