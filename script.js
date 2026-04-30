@@ -50,6 +50,32 @@ function getTimerEnd() {
 const timerEnd = getTimerEnd();
 const minutesEl = document.querySelector("[data-minutes]");
 const secondsEl = document.querySelector("[data-seconds]");
+const couponPopup = document.querySelector("[data-coupon-popup]");
+const couponClose = document.querySelector("[data-coupon-close]");
+let couponShown = false;
+
+function openCouponPopup() {
+  if (!couponPopup || couponShown) return;
+
+  couponShown = true;
+  couponPopup.classList.add("is-open");
+  couponPopup.setAttribute("aria-hidden", "false");
+}
+
+function closeCouponPopup() {
+  if (!couponPopup) return;
+
+  couponPopup.classList.remove("is-open");
+  couponPopup.setAttribute("aria-hidden", "true");
+}
+
+couponClose?.addEventListener("click", closeCouponPopup);
+
+couponPopup?.addEventListener("click", (event) => {
+  if (event.target === couponPopup) {
+    closeCouponPopup();
+  }
+});
 
 function updateTimer() {
   const remaining = Math.max(0, timerEnd - Date.now());
@@ -59,6 +85,10 @@ function updateTimer() {
 
   minutesEl.textContent = String(minutes).padStart(2, "0");
   secondsEl.textContent = String(seconds).padStart(2, "0");
+
+  if (remaining <= 0) {
+    openCouponPopup();
+  }
 }
 
 updateTimer();
