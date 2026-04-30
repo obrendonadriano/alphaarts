@@ -2203,6 +2203,251 @@ img {
   }
 }
 
+.designer-side p span {
+  color: #ff1717 !important;
+}
+
+.alphaarts-side strong,
+.alphaarts-side p span {
+  color: #00ff3b !important;
+}
+
+.faq summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  list-style: none;
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq summary::before {
+  content: "";
+  width: 0;
+  height: 0;
+  margin-top: .36em;
+  flex: 0 0 auto;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 10px solid var(--purple);
+  filter: drop-shadow(0 0 5px rgba(140, 0, 255, .7));
+  transition: transform .2s ease;
+}
+
+.faq details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+@keyframes buyPulseMobile {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 14px rgba(140, 0, 255, .24);
+  }
+
+  50% {
+    transform: scale(1.018);
+    box-shadow: 0 0 22px rgba(160, 20, 255, .42);
+  }
+}
+
+@media (min-width: 768px) {
+  .collection-card,
+  .collection-card.compact,
+  .collection-card.text-only {
+    min-height: 430px;
+  }
+
+  .thumb-row,
+  .collection-card.compact .thumb-row {
+    height: 188px;
+  }
+
+  .wide-card .thumb-row {
+    height: 300px;
+  }
+}
+
+@media (max-width: 767px) {
+  .phone-page {
+    padding-bottom: 86px;
+  }
+
+  .hero {
+    min-height: 620px;
+    padding-top: 42px;
+  }
+
+  .hero h1 {
+    max-width: 352px;
+    font-size: clamp(33px, 9.55vw, 39px);
+    line-height: 1.02;
+  }
+
+  .hero-sub {
+    max-width: 342px;
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-size: clamp(25px, 7vw, 29px);
+    line-height: 1.13;
+  }
+
+  .access-copy {
+    max-width: 342px;
+    margin-bottom: 22px;
+    font-size: clamp(19px, 5.55vw, 23px);
+    line-height: 1.13;
+  }
+
+  .hero .primary-btn {
+    margin-top: 16px;
+  }
+
+  .primary-btn {
+    width: min(100%, 318px);
+    min-height: 43px;
+  }
+
+  .collections {
+    gap: 18px;
+  }
+
+  .collection-card,
+  .collection-card.compact,
+  .collection-card.text-only,
+  .wide-card {
+    min-height: 0;
+    padding: 26px 19px 28px;
+    border-radius: 18px;
+  }
+
+  .collection-card h4 {
+    margin-bottom: 18px;
+    font-size: clamp(27px, 7vw, 31px);
+    line-height: 1.08;
+  }
+
+  .thumb-row,
+  .collection-card.compact .thumb-row,
+  .collection-card.text-only .thumb-row {
+    height: 252px;
+    margin-bottom: 22px;
+  }
+
+  .wide-card .thumb-row {
+    height: 220px;
+  }
+
+  .collection-card p {
+    max-width: 336px;
+    font-size: clamp(20px, 5.7vw, 23px);
+    line-height: 1.13;
+  }
+
+  .comparison h3 {
+    font-size: clamp(30px, 8vw, 36px);
+    line-height: 1.08;
+  }
+
+  .compare-grid {
+    gap: 24px;
+  }
+
+  .designer-side p span,
+  .alphaarts-side p span {
+    font-size: 34px;
+  }
+
+  .faq {
+    gap: 12px;
+  }
+
+  .faq details {
+    padding: 18px;
+    border-radius: 10px;
+  }
+
+  .faq summary {
+    gap: 12px;
+    font-size: clamp(23px, 6.4vw, 29px);
+    line-height: 1.18;
+  }
+
+  .faq summary::before {
+    margin-top: .36em;
+    border-top-width: 6px;
+    border-bottom-width: 6px;
+    border-left-width: 9px;
+  }
+
+  .faq p {
+    padding-left: 21px;
+    font-size: clamp(17px, 4.9vw, 21px);
+    line-height: 1.24;
+  }
+
+  .offer {
+    min-height: calc(58px + env(safe-area-inset-bottom));
+    grid-template-columns: minmax(128px, 1fr) 40px 40px 122px;
+    gap: 5px;
+    padding: 4px 8px calc(4px + env(safe-area-inset-bottom));
+  }
+
+  .offer-label {
+    font-size: clamp(14px, 4vw, 16px);
+    white-space: nowrap;
+  }
+
+  .timer-box {
+    width: 40px;
+    height: 48px;
+    border-width: 2px;
+    border-radius: 7px;
+  }
+
+  .timer-box strong {
+    font-size: 21px;
+    line-height: .92;
+  }
+
+  .timer-box small {
+    font-size: 9px;
+  }
+
+  .buy-fixed {
+    width: 122px;
+    min-width: 0;
+    min-height: 42px;
+    box-sizing: border-box;
+    padding: 0 8px;
+    gap: 6px;
+    border-radius: 9px;
+    font-size: clamp(14px, 3.95vw, 16px);
+    animation: buyPulseMobile 2.1s ease-in-out infinite;
+  }
+
+  .download-icon {
+    width: 17px;
+    height: 18px;
+  }
+
+  .download-icon::before {
+    left: 7px;
+    top: 0;
+    height: 12px;
+    border-left-width: 4px;
+  }
+
+  .download-icon::after {
+    left: 3px;
+    top: 8px;
+    border-left-width: 6px;
+    border-right-width: 6px;
+    border-top-width: 7px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
