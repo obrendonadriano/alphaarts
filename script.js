@@ -1,6 +1,7 @@
 const TIMER_COOKIE = "alphaArtsTimerEndsAt";
 const TIMER_DURATION_MS = 5 * 60 * 1000;
 const META_CAPI_ENDPOINT = "/api/meta-capi";
+const META_PIXEL_ID = "796614969974062";
 
 document.addEventListener("contextmenu", (event) => {
   event.preventDefault();
@@ -122,6 +123,36 @@ function sendMetaCapiPageView() {
 }
 
 sendMetaCapiPageView();
+
+function fireMetaPixelImageFallback() {
+  const hasPixelHit = performance
+    .getEntriesByType("resource")
+    .some((entry) => entry.name.includes("facebook.com/tr") && entry.name.includes(`id=${META_PIXEL_ID}`));
+
+  if (hasPixelHit) return;
+
+  const img = new Image(1, 1);
+  const params = new URLSearchParams({
+    id: META_PIXEL_ID,
+    ev: "PageView",
+    dl: window.location.href,
+    rl: document.referrer || "",
+    if: "false",
+    ts: String(Date.now())
+  });
+
+  if (window.alphaMetaEventId) {
+    params.set("eid", window.alphaMetaEventId);
+  }
+
+  img.style.display = "none";
+  img.src = `https://www.facebook.com/tr/?${params.toString()}`;
+  document.body.appendChild(img);
+}
+
+window.addEventListener("load", () => {
+  window.setTimeout(fireMetaPixelImageFallback, 1800);
+});
 
 document.querySelectorAll(".thumb-row").forEach((row, rowIndex) => {
   const images = [...row.querySelectorAll("img")];

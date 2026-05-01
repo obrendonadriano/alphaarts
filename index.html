@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="styles.css">
   <!-- Meta Pixel Code -->
   <script>
-    window.alphaMetaEventId = `PageView-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -21,8 +20,9 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
+    window.alphaMetaEventId = `PageView-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     fbq('init', '796614969974062');
-    fbq('track', 'PageView', {}, { eventID: window.alphaMetaEventId });
+    fbq('track', 'PageView');
   </script>
   <noscript><img height="1" width="1" style="display:none"
   src="https://www.facebook.com/tr?id=796614969974062&ev=PageView&noscript=1"
