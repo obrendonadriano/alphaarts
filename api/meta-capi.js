@@ -1,3 +1,5 @@
+const crypto = require("crypto");
+
 const PIXEL_ID = process.env.META_PIXEL_ID || "796614969974062";
 const GRAPH_VERSION = process.env.META_GRAPH_VERSION || "v20.0";
 
@@ -35,6 +37,11 @@ function getClientIp(req) {
   return req.socket?.remoteAddress;
 }
 
+function sha256(value) {
+  if (!value) return undefined;
+  return crypto.createHash("sha256").update(String(value).trim().toLowerCase()).digest("hex");
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -68,13 +75,23 @@ module.exports = async function handler(req, res) {
       client_ip_address: getClientIp(req),
       client_user_agent: req.headers["user-agent"],
       fbp: payload.fbp,
-      fbc: payload.fbc
+      fbc: payload.fbc,
+      external_id: sha256(payload.externalId)
+    },
+    custom_data: {
+      page_title: payload.pageTitle
     }
   };
 
   Object.keys(event.user_data).forEach((key) => {
     if (!event.user_data[key]) {
       delete event.user_data[key];
+    }
+  });
+
+  Object.keys(event.custom_data).forEach((key) => {
+    if (!event.custom_data[key]) {
+      delete event.custom_data[key];
     }
   });
 

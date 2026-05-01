@@ -22,7 +22,7 @@
     'https://connect.facebook.net/en_US/fbevents.js');
     window.alphaMetaEventId = `PageView-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     fbq('init', '796614969974062');
-    fbq('track', 'PageView');
+    fbq('track', 'PageView', {}, { eventID: window.alphaMetaEventId });
   </script>
   <noscript><img height="1" width="1" style="display:none"
   src="https://www.facebook.com/tr?id=796614969974062&ev=PageView&noscript=1"

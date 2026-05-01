@@ -1,5 +1,7 @@
 const TIMER_COOKIE = "alphaArtsTimerEndsAt";
+const VISITOR_COOKIE = "alphaArtsVisitorId";
 const TIMER_DURATION_MS = 5 * 60 * 1000;
+const ATTRIBUTION_COOKIE_MS = 90 * 24 * 60 * 60 * 1000;
 const META_CAPI_ENDPOINT = "/api/meta-capi";
 const META_PIXEL_ID = "796614969974062";
 
@@ -26,15 +28,17 @@ document.addEventListener("keydown", (event) => {
 });
 
 function getCookie(name) {
-  return document.cookie
+  const raw = document.cookie
     .split("; ")
     .find((item) => item.startsWith(`${name}=`))
     ?.split("=")[1];
+
+  return raw ? decodeURIComponent(raw) : undefined;
 }
 
-function setCookie(name, value) {
-  const expires = new Date(Date.now() + TIMER_DURATION_MS).toUTCString();
-  document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
+function setCookie(name, value, durationMs = TIMER_DURATION_MS) {
+  const expires = new Date(Date.now() + durationMs).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
 }
 
 function getTimerEnd() {
@@ -96,6 +100,45 @@ function updateTimer() {
 updateTimer();
 setInterval(updateTimer, 1000);
 
+function createMetaRandomId() {
+  if (window.crypto?.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+}
+
+function getOrCreateVisitorId() {
+  const saved = getCookie(VISITOR_COOKIE);
+  if (saved) return saved;
+
+  const next = createMetaRandomId();
+  setCookie(VISITOR_COOKIE, next, ATTRIBUTION_COOKIE_MS);
+  return next;
+}
+
+function getOrCreateFbp() {
+  const saved = getCookie("_fbp");
+  if (saved) return saved;
+
+  const next = `fb.1.${Date.now()}.${Math.floor(Math.random() * 10000000000)}`;
+  setCookie("_fbp", next, ATTRIBUTION_COOKIE_MS);
+  return next;
+}
+
+function getOrCreateFbc() {
+  const current = getCookie("_fbc");
+  const fbclid = new URLSearchParams(window.location.search).get("fbclid");
+
+  if (fbclid) {
+    const next = `fb.1.${Date.now()}.${fbclid}`;
+    setCookie("_fbc", next, ATTRIBUTION_COOKIE_MS);
+    return next;
+  }
+
+  return current;
+}
+
 function sendMetaCapiPageView() {
   if (!window.alphaMetaEventId) return;
 
@@ -103,8 +146,10 @@ function sendMetaCapiPageView() {
     eventId: window.alphaMetaEventId,
     eventName: "PageView",
     eventSourceUrl: window.location.href,
-    fbp: getCookie("_fbp"),
-    fbc: getCookie("_fbc")
+    fbp: getOrCreateFbp(),
+    fbc: getOrCreateFbc(),
+    externalId: getOrCreateVisitorId(),
+    pageTitle: document.title
   };
 
   const body = JSON.stringify(payload);
@@ -122,7 +167,7 @@ function sendMetaCapiPageView() {
   }).catch(() => {});
 }
 
-sendMetaCapiPageView();
+window.setTimeout(sendMetaCapiPageView, 2000);
 
 function fireMetaPixelImageFallback() {
   const hasPixelHit = performance
