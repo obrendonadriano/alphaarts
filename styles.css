@@ -1250,6 +1250,22 @@ img {
   backdrop-filter: none;
 }
 
+.offer::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -120px;
+  height: 120px;
+  background: #000;
+  pointer-events: none;
+}
+
+.offer > * {
+  position: relative;
+  z-index: 1;
+}
+
 .offer-label {
   justify-self: start;
   font-size: 29px;
@@ -2533,10 +2549,10 @@ img {
   }
 
   .offer {
-    min-height: calc(58px + env(safe-area-inset-bottom));
+    min-height: calc(58px + max(14px, env(safe-area-inset-bottom)));
     grid-template-columns: minmax(128px, 1fr) 40px 40px 122px;
     gap: 5px;
-    padding: 4px 8px calc(4px + env(safe-area-inset-bottom));
+    padding: 4px 8px calc(4px + max(14px, env(safe-area-inset-bottom)));
   }
 
   .offer-label {
