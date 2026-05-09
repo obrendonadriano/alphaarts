@@ -205,7 +205,8 @@ document.querySelectorAll(".thumb-row").forEach((row, rowIndex) => {
 
   const track = document.createElement("div");
   track.className = "carousel-track";
-  track.style.setProperty("--duration", `${28 + (rowIndex % 5) * 3}s`);
+  const duration = 28 + (rowIndex % 5) * 3;
+  track.style.setProperty("--duration", `${duration}s`);
   track.style.setProperty("--items", images.length);
 
   [...images, ...images].forEach((image) => {
@@ -214,14 +215,112 @@ document.querySelectorAll(".thumb-row").forEach((row, rowIndex) => {
   });
 
   row.replaceChildren(track);
+  setupDraggableThumbRow(row, track, duration);
 });
 
+function setupDraggableThumbRow(row, track, durationSeconds) {
+  const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  const state = {
+    activePointerId: null,
+    dragStartX: 0,
+    startOffset: 0,
+    offset: 0,
+    lastTime: null,
+    loopWidth: 0
+  };
+
+  row.classList.add("is-js-carousel");
+
+  const getLoopWidth = () => {
+    state.loopWidth = track.scrollWidth / 2;
+    return state.loopWidth;
+  };
+
+  const normalizeOffset = (value) => {
+    const width = getLoopWidth();
+    if (!width) return 0;
+    return ((value % width) + width) % width;
+  };
+
+  const render = () => {
+    track.style.transform = `translate3d(${-state.offset}px, 0, 0)`;
+  };
+
+  const tick = (time) => {
+    if (state.lastTime === null) {
+      state.lastTime = time;
+    }
+
+    const elapsed = time - state.lastTime;
+    state.lastTime = time;
+
+    if (!reducedMotion && state.activePointerId === null) {
+      const width = getLoopWidth();
+      if (width) {
+        state.offset = normalizeOffset(state.offset + (width / (durationSeconds * 1000)) * elapsed);
+        render();
+      }
+    }
+
+    window.requestAnimationFrame(tick);
+  };
+
+  row.addEventListener("pointerdown", (event) => {
+    if (event.button !== undefined && event.button !== 0) return;
+
+    state.activePointerId = event.pointerId;
+    state.dragStartX = event.clientX;
+    state.startOffset = state.offset;
+    row.classList.add("is-dragging");
+    row.setPointerCapture?.(event.pointerId);
+  });
+
+  row.addEventListener("pointermove", (event) => {
+    if (state.activePointerId !== event.pointerId) return;
+
+    const deltaX = event.clientX - state.dragStartX;
+    state.offset = normalizeOffset(state.startOffset - deltaX);
+    render();
+    event.preventDefault();
+  });
+
+  const stopDrag = (event) => {
+    if (state.activePointerId !== event.pointerId) return;
+
+    row.classList.remove("is-dragging");
+    if (row.hasPointerCapture?.(event.pointerId)) {
+      row.releasePointerCapture(event.pointerId);
+    }
+    state.activePointerId = null;
+  };
+
+  row.addEventListener("pointerup", stopDrag);
+  row.addEventListener("pointercancel", stopDrag);
+
+  window.requestAnimationFrame(tick);
+}
+
 document.querySelectorAll(".compare-card").forEach((card) => {
+  const handle = card.querySelector(".compare-handle");
+  const line = card.querySelector(".compare-line");
+  let activePointerId = null;
+  let pointerOffset = 0;
+
   const setSplit = (clientX) => {
     const rect = card.getBoundingClientRect();
     const rawPercent = ((clientX - rect.left) / rect.width) * 100;
     const percent = Math.min(92, Math.max(8, rawPercent));
     card.style.setProperty("--split", `${percent}%`);
+  };
+
+  const startDrag = (event) => {
+    activePointerId = event.pointerId;
+    const rect = card.getBoundingClientRect();
+    const currentSplit = parseFloat(getComputedStyle(card).getPropertyValue("--split")) || 50;
+    pointerOffset = event.clientX - (rect.left + (rect.width * currentSplit) / 100);
+    card.classList.add("is-dragging");
+    card.setPointerCapture?.(event.pointerId);
+    event.preventDefault();
   };
 
   const stopDrag = () => {
@@ -230,20 +329,16 @@ document.querySelectorAll(".compare-card").forEach((card) => {
       card.releasePointerCapture(activePointerId);
     }
     activePointerId = null;
+    pointerOffset = 0;
   };
 
-  let activePointerId = null;
-
-  card.addEventListener("pointerdown", (event) => {
-    activePointerId = event.pointerId;
-    card.classList.add("is-dragging");
-    card.setPointerCapture?.(event.pointerId);
-    setSplit(event.clientX);
-  });
+  handle?.addEventListener("pointerdown", startDrag);
+  line?.addEventListener("pointerdown", startDrag);
 
   card.addEventListener("pointermove", (event) => {
     if (activePointerId !== event.pointerId) return;
-    setSplit(event.clientX);
+    setSplit(event.clientX - pointerOffset);
+    event.preventDefault();
   });
 
   card.addEventListener("pointerup", stopDrag);

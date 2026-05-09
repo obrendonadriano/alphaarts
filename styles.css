@@ -317,6 +317,13 @@ img {
   overflow: hidden;
   background: linear-gradient(90deg, #020203, rgba(140, 0, 255, .14), #020203);
   box-shadow: 0 0 21px rgba(140, 0, 255, .14);
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.thumb-row.is-dragging {
+  cursor: grabbing;
 }
 
 .thumb-row::before,
@@ -346,6 +353,10 @@ img {
   height: 100%;
   animation: slideLeft var(--duration, 20s) linear infinite;
   will-change: transform;
+}
+
+.thumb-row.is-js-carousel .carousel-track {
+  animation: none;
 }
 
 .thumb-row img {
@@ -2718,8 +2729,7 @@ img {
   border: 1px solid var(--purple);
   border-radius: 14px;
   background: #030303;
-  cursor: ew-resize;
-  touch-action: none;
+  cursor: default;
   user-select: none;
 }
 
@@ -2759,6 +2769,18 @@ img {
   background: var(--purple);
   z-index: 3;
   transform: translateX(-50%);
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.compare-line::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 28px;
+  transform: translateX(-50%);
 }
 
 .compare-handle {
@@ -2772,6 +2794,8 @@ img {
   background: #fff;
   transform: translate(-50%, -50%);
   box-shadow: 0 4px 20px rgba(0, 0, 0, .32);
+  cursor: ew-resize;
+  touch-action: none;
 }
 
 .compare-handle::before,
