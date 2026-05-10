@@ -285,6 +285,31 @@ async function setupSpanishPricing() {
 
 setupSpanishPricing();
 
+function setupPlanScrollButtons() {
+  const desktopTarget = document.querySelector("#planos");
+  const mobileTarget = document.querySelector("#plano-premium");
+  if (!desktopTarget || !mobileTarget) return;
+
+  document.querySelectorAll(".primary-btn").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const target = window.matchMedia("(max-width: 767px)").matches ? mobileTarget : desktopTarget;
+      const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
+      window.scrollTo({
+        top: target.getBoundingClientRect().top + window.scrollY,
+        left: 0,
+        behavior: "auto"
+      });
+      document.documentElement.style.scrollBehavior = previousScrollBehavior;
+      history.replaceState(null, "", `#${target.id}`);
+    });
+  });
+}
+
+setupPlanScrollButtons();
+
 document.querySelectorAll(".thumb-row").forEach((row, rowIndex) => {
   const images = [...row.querySelectorAll("img")];
   if (images.length === 0) return;
