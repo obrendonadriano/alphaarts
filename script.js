@@ -199,6 +199,92 @@ window.addEventListener("load", () => {
   window.setTimeout(fireMetaPixelImageFallback, 1800);
 });
 
+const ES_PRICE_GROUPS = {
+  eur: {
+    countries: ["ES"],
+    prices: {
+      "basic-old": "€24,90",
+      "basic-current": "€12,80",
+      "premium-old": "€39,90",
+      "premium-current": "€19,90"
+    },
+    checkout: {
+      basic: "https://pay.cakto.com.br/fpw8qdf_868838",
+      premium: "https://pay.cakto.com.br/qbfdnq8_868851"
+    }
+  },
+  usd: {
+    countries: ["MX", "CO", "CL", "PE"],
+    prices: {
+      "basic-old": "US$24,90",
+      "basic-current": "US$9,60",
+      "premium-old": "US$39,90",
+      "premium-current": "US$14,80"
+    },
+    checkout: {
+      basic: "https://pay.cakto.com.br/fpw8qdf_868838",
+      premium: "https://pay.cakto.com.br/qbfdnq8_868851"
+    }
+  }
+};
+
+function applySpanishPricing(country = "") {
+  if (!document.documentElement.lang.toLowerCase().startsWith("es")) return;
+
+  const normalizedCountry = country.toUpperCase();
+  const groupKey = ES_PRICE_GROUPS.eur.countries.includes(normalizedCountry) ? "eur" : "usd";
+  const group = ES_PRICE_GROUPS[groupKey];
+
+  document.documentElement.dataset.currency = groupKey;
+
+  document.querySelectorAll("[data-price]").forEach((element) => {
+    const price = group.prices[element.dataset.price];
+    if (price) {
+      element.textContent = price;
+    }
+  });
+
+  document.querySelectorAll("[data-checkout]").forEach((link) => {
+    const href = group.checkout[link.dataset.checkout];
+    if (href) {
+      link.href = href;
+    }
+  });
+}
+
+async function setupSpanishPricing() {
+  if (!document.documentElement.lang.toLowerCase().startsWith("es")) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const forcedCountry = params.get("country");
+  const forcedCurrency = params.get("currency");
+
+  if (forcedCurrency?.toLowerCase() === "eur") {
+    applySpanishPricing("ES");
+    return;
+  }
+
+  if (forcedCurrency?.toLowerCase() === "usd") {
+    applySpanishPricing("US");
+    return;
+  }
+
+  if (forcedCountry) {
+    applySpanishPricing(forcedCountry);
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/geo", { cache: "no-store" });
+    const data = await response.json();
+    applySpanishPricing(data.country);
+  } catch (error) {
+    applySpanishPricing();
+  }
+}
+
+setupSpanishPricing();
+
 document.querySelectorAll(".thumb-row").forEach((row, rowIndex) => {
   const images = [...row.querySelectorAll("img")];
   if (images.length === 0) return;
