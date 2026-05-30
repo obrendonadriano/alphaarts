@@ -5,6 +5,189 @@ const ATTRIBUTION_COOKIE_MS = 90 * 24 * 60 * 60 * 1000;
 const META_CAPI_ENDPOINT = "/api/meta-capi";
 const META_PIXEL_ID = "796614969974062";
 
+function setupDottedSurfaces() {
+  const canvases = document.querySelectorAll("[data-dotted-surface]");
+  if (!canvases.length) return;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  canvases.forEach((canvas) => {
+    if (!(canvas instanceof HTMLCanvasElement)) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = 0;
+    let height = 0;
+    let frame = 0;
+    let animationId = 0;
+    const pointer = {
+      x: -9999,
+      y: -9999,
+      active: false
+    };
+    const points = [];
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      width = Math.max(1, Math.floor(rect.width));
+      height = Math.max(1, Math.floor(rect.height));
+      canvas.width = Math.floor(width * ratio);
+      canvas.height = Math.floor(height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      points.length = 0;
+      const gap = width < 768 ? 32 : 42;
+      const rows = Math.ceil(height / gap) + 8;
+      const cols = Math.ceil(width / gap) + 36;
+      const startX = -width * .75;
+      const startY = -gap * 2;
+
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          points.push({
+            x: startX + x * gap,
+            y: startY + y * gap,
+            ix: x,
+            iy: y
+          });
+        }
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+
+      points.forEach((point) => {
+        const wave =
+          Math.sin((point.ix + frame) * .34) * 18 +
+          Math.sin((point.iy + frame) * .52) * 16;
+        const renderX = point.x + (point.y - height * .36) * .34;
+        const renderY = point.y + wave;
+        const dx = renderX - pointer.x;
+        const dy = renderY - pointer.y;
+        const distance = Math.hypot(dx, dy);
+        const influence = pointer.active ? Math.max(0, 1 - distance / 210) : 0;
+        const angle = Math.atan2(dy, dx);
+        const push = influence * influence * 72;
+        const depth = point.y / Math.max(height, 1);
+        const alpha = Math.max(0, .88 - depth * .48);
+        const radius = width < 768 ? 1.8 : 2.4;
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(176, 38, 255, ${Math.min(.95, alpha + influence * .35)})`;
+        ctx.shadowColor = "rgba(176, 38, 255, .9)";
+        ctx.shadowBlur = 14 + influence * 12;
+        ctx.arc(
+          renderX + Math.cos(angle) * push,
+          renderY + Math.sin(angle) * push,
+          radius + influence * 1.8,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      });
+
+      if (!reduceMotion) {
+        frame += .045;
+        animationId = requestAnimationFrame(draw);
+      }
+    }
+
+    resize();
+    draw();
+
+    function handlePointerMove(event) {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = event.clientX - rect.left;
+      pointer.y = event.clientY - rect.top;
+      pointer.active = true;
+    }
+
+    function handlePointerLeave() {
+      pointer.active = false;
+    }
+
+    window.addEventListener("resize", resize);
+    window.addEventListener("pointermove", handlePointerMove);
+    document.addEventListener("mouseleave", handlePointerLeave);
+
+    window.addEventListener("pagehide", () => {
+      cancelAnimationFrame(animationId);
+    }, { once: true });
+  });
+}
+
+setupDottedSurfaces();
+
+function setupScrollBuildEffects() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const revealItems = [];
+  const addReveal = (selector, direction = "from-bottom", delayStep = 70) => {
+    document.querySelectorAll(selector).forEach((element, index) => {
+      revealItems.push({ element, direction, delay: index * delayStep });
+    });
+  };
+
+  addReveal(".workload h2, .workload > p, .workload-note", "from-bottom", 80);
+  addReveal(".compare-card", "from-left", 95);
+  addReveal(".intro h2, .intro p, .intro h3", "from-bottom", 70);
+  addReveal(".collection-card:nth-child(odd)", "from-left", 45);
+  addReveal(".collection-card:nth-child(even)", "from-right", 45);
+  addReveal(".benefits h3", "from-bottom", 0);
+  addReveal(".benefit-card:nth-of-type(odd)", "from-left", 90);
+  addReveal(".benefit-card:nth-of-type(even)", "from-right", 90);
+  addReveal(".toolkit-copy", "from-left", 0);
+  addReveal(".toolkit > img", "from-right", 0);
+  addReveal(".desire-callout h2, .desire-callout .primary-btn", "from-bottom", 90);
+  addReveal(".community h2", "from-bottom", 0);
+  addReveal(".community-grid article:nth-child(odd)", "from-left", 80);
+  addReveal(".community-grid article:nth-child(even)", "from-right", 80);
+  addReveal(".video-card", "from-zoom", 0);
+  addReveal(".access h2, .access p, .receive h2, .receive p", "from-bottom", 70);
+  addReveal(".receive-carousel-card", "from-bottom", 45);
+  addReveal(".guarantee", "from-left", 0);
+  addReveal(".price-card.basic-card", "from-left", 0);
+  addReveal(".price-card.premium-card", "from-right", 0);
+  addReveal(".comparison h3", "from-bottom", 0);
+  addReveal(".designer-side", "from-left", 0);
+  addReveal(".alphaarts-side", "from-right", 0);
+  addReveal(".investment h2, .investment p", "from-bottom", 70);
+  addReveal(".shopee-grid img", "from-bottom", 80);
+  addReveal(".final-guarantee img", "from-left", 0);
+  addReveal(".final-guarantee > div", "from-right", 0);
+  addReveal(".faq h2", "from-bottom", 0);
+  addReveal(".faq details", "from-bottom", 65);
+  addReveal(".footer-brand", "from-left", 0);
+  addReveal(".footer-sections > div", "from-right", 80);
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    });
+  }, {
+    threshold: .16,
+    rootMargin: "0px 0px -10% 0px"
+  });
+
+  const seen = new Set();
+  revealItems.forEach(({ element, direction, delay }) => {
+    if (seen.has(element)) return;
+    seen.add(element);
+
+    element.classList.add("scroll-reveal", direction);
+    element.style.setProperty("--reveal-delay", `${Math.min(delay, 420)}ms`);
+    observer.observe(element);
+  });
+}
+
+setupScrollBuildEffects();
+
 document.addEventListener("contextmenu", (event) => {
   event.preventDefault();
 });
@@ -209,8 +392,8 @@ const ES_PRICE_GROUPS = {
       "premium-current": "€19,90"
     },
     checkout: {
-      basic: "https://pay.cakto.com.br/fpw8qdf_868838",
-      premium: "https://pay.cakto.com.br/qbfdnq8_868851"
+      basic: "https://pay.cakto.com.br/fpw8qdf_907563",
+      premium: "https://pay.cakto.com.br/qbfdnq8_907563"
     }
   },
   usd: {
@@ -222,8 +405,8 @@ const ES_PRICE_GROUPS = {
       "premium-current": "US$14,80"
     },
     checkout: {
-      basic: "https://pay.cakto.com.br/fpw8qdf_868838",
-      premium: "https://pay.cakto.com.br/qbfdnq8_868851"
+      basic: "https://pay.cakto.com.br/fpw8qdf_907563",
+      premium: "https://pay.cakto.com.br/qbfdnq8_907563"
     }
   }
 };
@@ -290,7 +473,7 @@ function setupPlanScrollButtons() {
   const mobileTarget = document.querySelector("#plano-premium");
   if (!desktopTarget || !mobileTarget) return;
 
-  document.querySelectorAll(".primary-btn").forEach((button) => {
+  document.querySelectorAll(".primary-btn, .buy-fixed, .coupon-btn").forEach((button) => {
     button.addEventListener("click", (event) => {
       event.preventDefault();
 
@@ -304,6 +487,7 @@ function setupPlanScrollButtons() {
       });
       document.documentElement.style.scrollBehavior = previousScrollBehavior;
       history.replaceState(null, "", `#${target.id}`);
+      closeCouponPopup();
     });
   });
 }
