@@ -4083,6 +4083,41 @@ img {
   }
 }
 
+@media (max-width: 767px) {
+  .hero {
+    min-height: 540px;
+    padding-top: 72px;
+  }
+
+  .hero-dotted {
+    height: 640px;
+    opacity: .9;
+    mask-image: linear-gradient(180deg, #000 0%, #000 82%, transparent 96%);
+  }
+
+  .premium-strip {
+    position: relative;
+    z-index: 3;
+    min-height: 50px;
+    background: #8d00f5;
+    box-shadow: 0 -1px 0 #8d00f5, 0 1px 0 #8d00f5;
+  }
+
+  .premium-track {
+    min-height: 50px;
+  }
+
+  .premium-track img {
+    height: 31px;
+  }
+
+  .intro {
+    position: relative;
+    z-index: 2;
+    background: #000;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
