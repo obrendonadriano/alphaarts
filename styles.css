@@ -798,8 +798,55 @@ img {
 }
 
 .premium-card {
+  position: relative;
+  overflow: hidden;
   border-color: rgba(140, 0, 255, .95);
-  box-shadow: 0 0 34px rgba(140, 0, 255, .34), 0 0 90px rgba(140, 0, 255, .14);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(140, 0, 255, .24), transparent 38%),
+    linear-gradient(180deg, rgba(18, 0, 32, .98), rgba(5, 5, 6, .98));
+  box-shadow: 0 0 34px rgba(140, 0, 255, .38), 0 0 110px rgba(140, 0, 255, .18);
+}
+
+.premium-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, .18);
+}
+
+.plan-badge {
+  width: max-content;
+  margin: -8px auto 14px;
+  padding: 7px 18px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6cff00, #c8ff77);
+  color: #061000;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: .5px;
+  box-shadow: 0 0 22px rgba(108, 255, 0, .36);
+}
+
+.premium-kicker {
+  color: #fff !important;
+  font-weight: 800 !important;
+}
+
+.premium-upgrade {
+  width: max-content;
+  max-width: 100%;
+  margin: 12px auto 0;
+  padding: 8px 14px;
+  border: 1px solid rgba(108, 255, 0, .52);
+  border-radius: 999px;
+  background: rgba(108, 255, 0, .1);
+  color: #b7ff82;
+  font-size: 16px;
+  line-height: 1.1;
+  font-weight: 800;
 }
 
 .premium-card .plan-image {
@@ -814,7 +861,8 @@ img {
 .premium-btn {
   min-height: 72px;
   line-height: .92;
-  box-shadow: 0 0 28px rgba(108, 255, 0, .38), 0 0 54px rgba(140, 0, 255, .24);
+  background: linear-gradient(180deg, #8cff28, #55e900);
+  box-shadow: 0 0 34px rgba(108, 255, 0, .46), 0 0 64px rgba(140, 0, 255, .28);
   animation: premiumButtonPulse 1.9s ease-in-out infinite;
 }
 
@@ -1039,7 +1087,7 @@ img {
 }
 
 .price-card {
-  min-height: 640px;
+  min-height: 680px;
   padding: 22px 22px 30px;
 }
 
@@ -1095,7 +1143,8 @@ img {
 }
 
 .premium-card {
-  transform: translateY(0);
+  min-height: 720px;
+  transform: translateY(-12px);
 }
 
 .compare-grid {
@@ -3349,8 +3398,8 @@ img {
   }
 
   .price-card {
-    height: 520px;
-    min-height: 0;
+    height: auto;
+    min-height: 520px;
     padding: 18px 16px 22px;
   }
 
@@ -3384,6 +3433,18 @@ img {
 
   .price-card .new-price {
     font-size: 34px;
+  }
+
+  .plan-badge {
+    margin-bottom: 12px;
+    padding: 6px 16px;
+    font-size: 13px;
+  }
+
+  .premium-upgrade {
+    margin-top: 9px;
+    padding: 7px 12px;
+    font-size: 13px;
   }
 
   .discount-btn {
