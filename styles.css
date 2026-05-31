@@ -849,6 +849,10 @@ img {
   font-weight: 800;
 }
 
+html[lang="es"] .premium-card .old-price {
+  margin-top: 18px;
+}
+
 .premium-card .plan-image {
   box-shadow: 0 0 28px rgba(140, 0, 255, .34);
 }
@@ -4176,6 +4180,37 @@ img {
     position: relative;
     z-index: 2;
     background: #000;
+  }
+
+  html[lang="es"] .premium-card .plan-image {
+    height: 70px;
+    margin-bottom: 8px;
+  }
+
+  html[lang="es"] .premium-card h3 {
+    margin-bottom: 7px;
+    font-size: 24px;
+  }
+
+  html[lang="es"] .premium-card span,
+  html[lang="es"] .premium-card p {
+    margin-bottom: 4px;
+    font-size: 12px;
+    line-height: 1.08;
+  }
+
+  html[lang="es"] .premium-card .old-price {
+    margin-top: 7px;
+    font-size: 13px;
+  }
+
+  html[lang="es"] .premium-card .new-price {
+    font-size: 30px;
+  }
+
+  html[lang="es"] .premium-card .premium-btn {
+    min-height: 40px;
+    font-size: 14px;
   }
 }
 
